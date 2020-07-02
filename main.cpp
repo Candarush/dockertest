@@ -1,14 +1,25 @@
 #include <SFML/Graphics.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/video.hpp>
+
 #include <iostream>
 
 using namespace std;
 using namespace sf;
+using namespace cv;
 
 int main()
 {
     cout<<"Hello SFML!"<<endl;
     
-    sf::RenderWindow window(sf::VideoMode(300, 300), "RoboDodge");
+    Mat3b GreenBox(400, 100, Vec3b(0,255,0));
+    imshow("OpenCV", GreenBox);
+    
+    sf::RenderWindow window(sf::VideoMode(300, 300), "SFML");
     
     while (window.isOpen())
     {
