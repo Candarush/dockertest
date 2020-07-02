@@ -1,0 +1,2 @@
+# dockertest
+Проблему с запуском решил, с библиотекой SFML запускается и окно появляется. Но после того как подключил в dockerfile opencv из примера на lms.mai перестал запускаться ./exec. При этом сам компилятор не выдает никаких ошибок. Ошибка которая появляется при запуске: ./exec: error while loading shared libraries: libopencv_highgui.so.3.2: cannot open shared object file: No such file or directory
