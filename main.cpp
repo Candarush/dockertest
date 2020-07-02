@@ -1,10 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/video.hpp>
 
 #include <iostream>
 
@@ -12,15 +7,22 @@ using namespace std;
 using namespace sf;
 using namespace cv;
 
+bool nextFrame = true;
+
 int main()
 {
     cout<<"Hello SFML!"<<endl;
     
-    Mat3b GreenBox(400, 100, Vec3b(0,255,0));
-    imshow("OpenCV", GreenBox);
+    sf::RenderWindow window(sf::VideoMode(1000, 500), "SFML");
     
-    sf::RenderWindow window(sf::VideoMode(300, 300), "SFML");
-    
+    VideoCapture cap("BallTestLine.mp4");
+
+    sf::Texture texture;
+    sf::Sprite sprite;
+    sf::Image image;
+
+    Mat frameRGB;
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -36,19 +38,57 @@ int main()
                 if (event.key.code == sf::Keyboard::Escape)
                     window.close();
             }
+            
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Escape)
+                    window.close();
+                if (event.key.code == sf::Keyboard::Up)
+                    nextFrame = true;
+            }
         }
-        
+
         RectangleShape rectangle;
         rectangle.setSize(sf::Vector2f(100, 50));
         rectangle.setOutlineColor(sf::Color::Red);
         rectangle.setOutlineThickness(5);
         rectangle.setPosition(10, 20);
+        Mat frameRGBA;
         
+        if (nextFrame)
+        {
+            cap >> frameRGB;
+            nextFrame = false;
+        }
+        
+        if(frameRGB.empty())
+        {
+            cout<<"Видео закончилось."<<endl;
+            window.close();
+        }
+        
+        cv::cvtColor(frameRGB, frameRGBA, cv::COLOR_BGR2RGBA);
+        
+        image.create(frameRGBA.cols, frameRGBA.rows, frameRGBA.ptr());
+
+        if (!texture.loadFromImage(image))
+        {
+            cout<<"Ошибка"<<endl;
+            return -2;
+        }
+
+        sprite.setTexture(texture);
+        sprite.setPosition(500,0);
+
         window.clear();
-        
+
         window.draw(rectangle);
         
+        window.draw(sprite);
+
         window.display();
     }
+    
+    
     return 0;
 }
